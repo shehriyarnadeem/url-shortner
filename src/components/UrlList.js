@@ -6,17 +6,28 @@ import UpdateUrlForm from './UpdateUrlForm';
 import DeleteUrlForm from './DeleteUrlForm';
 import {apiProvider} from '../services/provider';
 
-const UrlList = () => {
+const UrlList = ({initialData}) => {
 
 	const [addModal, setAddModal]= useState(false);
 	const [updateModal, setUpdateModal]= useState(false);
 	const [deleteModal, setDeleteModal]= useState(false);
 	const [selectedUrl, setSelectedUrl]= useState({});
-	const [tabledata, setTableData] =  useState([])
+	const [tabledata, setTableData] =  useState(initialData || [])
 	const [urlClicked, setUrlClicked]= useState(0);
 	const [error, setError] =  useState([])
-	const [pending, setPending] = React.useState(true);
-	const [stats, setStats]= useState();
+	const [pending, setPending] = useState(true);
+
+	useEffect(() => {
+		async function fetchUrls() {
+			let response = await apiProvider.getAll('urls');
+			if(response.error){
+				setError(error);
+			}
+			setTableData(response)
+			setPending(false);
+    }
+    fetchUrls();
+	}, [])
 
 	useEffect(() => {
 		async function fetchUrls() {
@@ -30,17 +41,7 @@ const UrlList = () => {
     fetchUrls();
 	}, [deleteModal, updateModal, addModal, urlClicked])
 
-	useEffect(() => {
-		async function fetchUrls() {
-			let response = await apiProvider.getAll('urls');
-			if(response.error){
-				setError(error);
-			}
-			setTableData(response)
-			setPending(false);
-    }
-    fetchUrls();
-	}, [])
+	console.log(tabledata)
 	
 const columns = [
 	{
@@ -110,9 +111,6 @@ const handleUrlRedirect = async (event,row) => {
 		
 }
 
-  const handleStats =(data)=>{
-    setStats(data);
-  }
 	return (
 		<>
 		 <div>
@@ -122,13 +120,7 @@ const handleUrlRedirect = async (event,row) => {
 			</button>
 			</div>
 			<DataTable
-					 title="Url List" 
-					  
-					 subHeaderComponent={()=>{
-						return<button type='btn btn-primary relative' className='btn btn-primary mb-2' onClick={setAddModal}>
-						Add new Url
-						</button>
-					 }}
+					 title="Url List"  
 					  progressPending={pending}
 						pagination
 						customStyles={{width:'100%', height:'100vh'}}
@@ -138,19 +130,19 @@ const handleUrlRedirect = async (event,row) => {
 			<AppModal isOpen={addModal} label="New modal" 
 			children={
 				<>
-				<AddTodoForm handleStats={handleStats} closeModal={setAddModal}/>
+				<AddTodoForm closeModal={setAddModal}/>
 				</>
 			}/>
 			<AppModal isOpen={updateModal} label="Update Url"  
 			children={
 				<>
-				<UpdateUrlForm handleStats={handleStats} closeModal={setUpdateModal} selectedUrl={selectedUrl}/>
+				<UpdateUrlForm  closeModal={setUpdateModal} selectedUrl={selectedUrl}/>
 				</>
 			}/>
 				<AppModal isOpen={deleteModal} label="Delete Url"  
 			children={
 				<>
-				<DeleteUrlForm handleStats={handleStats} closeModal={setDeleteModal} selectedUrl={selectedUrl}/>
+				<DeleteUrlForm closeModal={setDeleteModal} selectedUrl={selectedUrl}/>
 				</>
 			}/>
 			</div> 

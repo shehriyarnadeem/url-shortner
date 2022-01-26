@@ -1,4 +1,4 @@
-import React, {useState, useContext} from 'react'
+import React, {useState, useEffect} from 'react'
 import {
   Button,
   Card,
@@ -7,28 +7,29 @@ import {
   Col,
   Container,
   Form,
-  Alert,
   Input,
   InputGroup,
   Row,
 } from "reactstrap";
-import UserContext from "../userContext";
 import {
   useNavigate
 } from "react-router-dom";
 import {apiProvider} from '../services/provider';
 import "./Login.css";
 function Register() {
-
-  const context = useContext(UserContext);
   let navigate = useNavigate();
+
+	useEffect(() => {
+    const token = localStorage.getItem('user');
+    if(token){
+    navigate("/", { replace: true });
+    }
+  }, [])
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
   const [password, setPassword] = useState(null);
   const [passwordConfrim, setPasswordConfirm] = useState(null);
-  const [success, setSuccess] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();

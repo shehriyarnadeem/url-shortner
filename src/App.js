@@ -23,9 +23,14 @@ const Login = React.lazy(() => import("./components/Login"));
 
 const App = () => {
 	let user = null;
-	let history = useNavigate();
+	let navigate = useNavigate();
 
-
+	useEffect(() => {
+    const token = localStorage.getItem('user');
+    if(!token){
+    navigate("/login", { replace: true });
+    }
+  }, [])
 
 	return (
 		<UserContext.Provider value={user}>

@@ -1,4 +1,4 @@
-import React, {useState, useContext} from 'react'
+import React, {useState, useEffect} from 'react'
 import {
   Button,
   Card,
@@ -11,22 +11,26 @@ import {
   InputGroup,
   Row,
 } from "reactstrap";
-import UserContext from "../userContext";
 import {
   useNavigate
 } from "react-router-dom";
 import {apiProvider} from '../services/provider';
 import "./Login.css";
 function Login() {
-  const context = useContext(UserContext);
   let navigate = useNavigate();
+
+	useEffect(() => {
+    const token = localStorage.getItem('user');
+    if(token){
+    navigate("/", { replace: true });
+    }
+  }, [])
   const [email, setEmail] = useState("");
   const [error, setError] = useState(null);
   const [password, setPassword] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await localStorage.removeItem('user');
     setError(null);
     const response =  await apiProvider.post('login', {email, password});
     if(response.error){
@@ -34,7 +38,7 @@ function Login() {
       return
 		}
     if(response && response.token){
-      await localStorage.setItem('user', JSON.stringify(response));
+      localStorage.setItem('user', JSON.stringify(response));
       navigate("/", { replace: true });
     }
   }

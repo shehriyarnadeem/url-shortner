@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {apiProvider} from '../services/provider';
 
-const AddTodoForm = ({handleStats, closeModal}) => {
+const AddTodoForm = ({closeModal}) => {
 	const [value, setValue] = useState('');
 	const [error, setError] = useState(null);
 
