@@ -1,0 +1,11 @@
+.btn-theme-color {
+  background-color: #5500d4;
+  color: white;
+}
+
+.cardLogo {
+  border-right: 1px solid white;
+  height: 400px;
+  padding-top: 20px;
+  padding-left: 80px;
+}
